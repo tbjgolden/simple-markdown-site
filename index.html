@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+    <head>
+        <title>My name</title>
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                display: flex;
+                flex-wrap: wrap;
+                align-content: flex-start;
+                min-height: 100vh;
+            }
+
+            body > :not(script) {
+                min-width: 200px;
+                flex: 1 0 0;
+                padding: 24px;
+                border: none;
+            }
+
+            #out {
+                font-family: sans-serif;
+                font-size: 16px;
+            }
+
+            #out > :first-child {
+                margin-top: 0;
+            }
+
+            #out > :last-child {
+                margin-bottom: 0;
+            }
+
+            textarea {
+                font-family: monospace;
+                font-size: 16px;
+                min-height: 50vh;
+                resize: none;
+                background-color: #eee;
+            }
+
+            code {
+                background-color: #eee;
+                box-shadow: -3px -3px 0 #eee, -3px 3px 0 #eee, 3px -3px 0 #eee, 3px 3px 0 #eee;
+            }
+        </style>
+    </head>
+    <body>
+        <textarea id="in" oninput="updateOut(event)"></textarea>
+        <div id="out"></div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.7/marked.min.js"></script>
+        <script>
+            marked.setOptions({
+                renderer: new marked.Renderer(),
+                gfm: true,
+                tables: true,
+                breaks: false,
+                pedantic: false,
+                sanitize: false,
+                smartLists: true,
+                smartypants: false
+            });
+            
+            var input = document.querySelector('#in');
+            var output = document.querySelector('#out');
+            var debounce = null;
+
+            function updateOut (event) {
+                output.innerHTML = marked(event.target.value);
+
+                clearTimeout(debounce);
+                debounce = setTimeout(function () {
+                    localStorage.setItem('text', event.target.value);
+                }, 300);
+            }
+
+            var initialText = localStorage.getItem('text') || '# Hello\n\nI\'m Tom';
+            input.value = initialText;
+            output.innerHTML = marked(initialText);
+        </script>
+    </body>
+</html>
